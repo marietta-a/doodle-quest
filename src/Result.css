@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* These are the ONLY custom rules you need */
+
+/* This container ensures the SVG inside it scales properly without distortion */
+.doodle-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* These rules are ESSENTIAL for the generated SVGs */
+.doodle-container svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  fill: none;
+}
+
+.adventure-card {
+  background-color: white;
+  padding: 1rem; /* p-4 */
+  border-radius: 1rem; /* rounded-2xl */
+  border: 4px dashed #a855f7; /* border-purple-400 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* gap-4 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+  width: 90vw; 
+  text-align: center;
+}
+.adventure-banner {
+  /* background-image: linear-gradient(to right, #8b5cf6, #4f46e5); */
+  color: linear-gradient(to right, #8b5cf6, #4f46e5);
+  padding: 0.75rem 0.75rem; /* px-3 py-2 */
+  border-radius: 0.75rem; /* rounded-xl */
+  width: auto;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adventure-description {
+  font-size: 1rem; /* text-md */
+}
+
+@media (min-width: 640px) {
+  .adventure-description {
+    font-size: 1.125rem; /* sm:text-lg */
+  }
+}
+
+.adventure-description {
+  color: #1f2937; /* text-gray-800 */
+  background-color: #fef9c3; /* bg-yellow-100 */
+  border-radius: 0.75rem; /* rounded-xl */
+  padding: 0.75rem 1rem; /* py-3 px-4 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  max-width: 42rem; /* max-w-2xl */
+  margin-left: auto; /* mx-auto */
+  margin-right: auto;
+  text-align: center;
+  line-height: 1.625; /* leading-relaxed */
+}
+.main-adventure-container {
+  padding: 1.5rem; /* p-6 */
+  background-color: rgba(255, 255, 255, 0.9); /* bg-white/90 */
+  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+  border-radius: 1.5rem; /* rounded-3xl */
+  border: 4px dashed #3b82f6; /* border-blue-500 */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+  width: auto;
+  max-width: 32rem; /* max-w-lg */
+}
+.main-adventure-heading {
+  font-size: 1.5rem;       /* text-2xl */
+  font-weight: 700;        /* font-bold */
+  margin-bottom: 1rem;     /* mb-4 */
+}
+
+.quest-panel {
+  padding: 1.5rem; /* p-6 */
+  background-color: rgba(255, 255, 255, 0.8); /* bg-white/80 */
+  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+  border-radius: 1.5rem; /* rounded-3xl */
+  border: 4px dashed #a855f7; /* border-purple-500 */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+  width: 80vw; 
+  margin: 10px;
+}
+.quest-heading {
+  font-size: 1.5rem;       /* text-2xl */
+  font-weight: 700;        /* font-bold */
+  margin-bottom: 1.5rem;   /* mb-6 */
+  text-align: center;      /* text-center */
+}
+.horizontal-scroll {
+  display: flex;
+  flex-wrap: wrap;         /* flex-nowrap */
+  gap: 1.5rem;               /* gap-6 */
+  overflow-x: auto;          /* horizontal scroll */
+  padding-bottom: 1rem;      /* pb-4 */
+  align-content: center;
+  justify-content: center;
+}
+.doodle-text {
+  background-image: linear-gradient(to right, #8b5cf6, #4f46e5); /* from-purple-500 to-indigo-600 */
+  color: white;
+  padding: 0.5rem 0.75rem; /* py-2 px-3 */
+  border-radius: 0.75rem; /* rounded-xl */
+  width: auto;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
+  font-size: large;
+}
+.emoji{
+  font-size: 150px;
+}
+.doodle-label {
+  font-size: 0.75rem;       /* text-xs */
+  font-weight: 700;         /* font-bold */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.05em;   /* tracking-wider */
+}
+.main-scene-description {
+  text-align: center;         /* text-center */
+  font-size: 1rem;            /* text-md */
+  font-style: italic;     
+  color: #4b5563;       
+  margin-top: 1rem;  
+  font-weight: 700;   
+}
+.extension-popup {
+  width: 20rem;              /* w-80 */
+  padding: 1rem;             /* p-4 */
+  background-color: #fffbeb; /* bg-yellow-50 */
+  font-family: monospace;    /* font-mono */
+  text-align: center;        /* text-center */
+}
+.adventure-title {
+  font-size: 1.25rem;       /* text-xl */
+  font-weight: 700;         /* font-bold */
+  margin-bottom: 0.5rem;    /* mb-2 */
+}
+
+.modal-overlay {
+  position: fixed;              /* fixed */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;                      /* inset-0 */
+  background-color: rgba(0, 0, 0, 0.5); /* bg-black/50 */
+  backdrop-filter: blur(4px);  /* backdrop-blur-sm */
+  display: flex;
+  align-items: center;         /* items-center */
+  justify-content: center;     /* justify-center */
+  z-index: 50;                 /* z-50 */
+  padding: 1rem;               /* p-4 */
+}
+
+.modal-content {
+  background-color: white;           /* bg-white */
+  padding: 1.5rem;                   /* p-6 */
+  border-radius: 1.5rem;             /* rounded-3xl */
+  border: 4px dashed #3b82f6;        /* border-blue-500 */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+  width: 100%;                       /* w-full */
+  max-width: 28rem;                  /* max-w-md */
+  text-align: center;               /* text-center */
+}
+
+.section-title {
+  font-size: x-large;
+  font-weight: 700;        /* font-bold */
+  color: #1f2937;          /* text-gray-800 */
+  margin-bottom: 0.5rem;   /* mb-2 */
+}
+
+.relaxed-text {
+  color: #4b5563;           /* text-gray-600 */
+  line-height: 1.625;       /* leading-relaxed */
+  font-size: large;
+}
+
+.cta-button {
+  margin-top: 1.5rem; /* mt-6 */
+  background-image: linear-gradient(to right, #3b82f6, #9333ea); /* from-blue-500 to-purple-600 */
+  color: white;
+  font-weight: 700; /* font-bold */
+  padding: 0.5rem 1.5rem; /* py-2 px-6 */
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  transition: transform 0.3s ease; /* transition-transform */
+}
+
+.cta-button:hover {
+  transform: scale(1.05); /* hover:scale-105 */
+}
+
+.icon-btn {
+  border-radius: 9999px;         /* rounded-full */
+  width: 2rem;                   /* w-8 */
+  height: 2rem;                  /* h-8 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;           /* text-lg */
+  transition: background-color 0.2s ease; /* transition */
+  background-color: #dcfce7;     /* bg-green-100 */
+  padding: 4px;
+  margin: 4px;
+  
+}
+
+.icon-btn-success {
+  color: #15803d;                /* text-green-700 */
+}
+
+.icon-button-success:hover {
+  background-color: #bbf7d0;     /* hover:bg-green-200 */
+}
+
+.icon-btn-danger {
+  color: #b91c1c;                /* text-green-700 */
+}
+.icon-btn-danger:hover {
+  color: #fecaca;              /* text-green-700 */
+}
+.icon-btn-container {
+  width: 100%;                  /* w-full */
+  display: flex;                /* flex */
+  justify-content: space-around; /* justify-around */
+  align-items: center;          /* items-center */
+  margin-top: 0.5rem;           /* mt-2 */
+  
+}
+
+.flex-gap {
+  display: flex;           /* flex */
+  gap: 0.5rem;             /* gap-2 */
+}
+
+
+
+

@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.extension-popup {
+  width: 20rem;              /* w-80 */
+  padding: 1rem;             /* p-4 */
+  background-color: #fffbeb; /* bg-yellow-50 */
+  font-family: monospace;    /* font-mono */
+  text-align: center;        /* text-center */
+}
+.adventure-title {
+  font-size: xx-large;       /* text-xl */
+  font-weight: 700;         /* font-bold */
+  margin-bottom: 0.5rem;    /* mb-2 */
+  color: green;
+}
+
+.quest-status {
+  margin-bottom: 1rem;         /* mb-4 */
+  min-height: 40px;            /* min-h-[40px] */
+  display: flex;               /* flex */
+  align-items: center;         /* items-center */
+  justify-content: center;     /* justify-center */
+  font-size: x-large;
+}
+
+.error-text {
+  color: #dc2626;       /* text-red-600 */
+  font-weight: 600;     /* font-semibold */
+}
+
+.text-gray {
+  color: #374151; /* text-gray-700 */
+}
+.primary-btn {
+  width: 100%;                        /* w-full */
+  padding: 0.5rem 1.5rem;             /* py-2 px-6 */
+  background-color: #3b82f6;          /* bg-blue-500 */
+  color: white;                       /* text-white */
+  font-weight: 700;                   /* font-bold */
+  border-radius: 0.5rem;              /* rounded-lg */
+  box-shadow: 0 4px 6px rgba(16, 132, 112, 0.1); /* shadow-md */
+  transition: background-color 0.2s ease;  /* transition-colors */
+  font-size: large;
+}
+
+.primary-btn:hover {
+  background-color: #2563eb;          /* hover:bg-blue-600 */
+  color: white;
+}
+
+.primary-btn:disabled {
+  background-color: #9ca3af;          /* disabled:bg-gray-400 */
+  cursor: not-allowed;                /* disabled:cursor-not-allowed */
+}
