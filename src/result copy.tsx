@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
-import './App.css'; 
+import './Result.css'; // Your existing CSS
+import './GameOver.css'; // The new CSS for the game over screen
 import { motion, AnimatePresence, animate } from 'framer-motion';
+import { shuffleArray } from './helpers/Functions';
 import { DoodleScene, Hotspot } from './ai/DoodleQuestAi';
 
 
@@ -12,34 +14,8 @@ const GeneratedDoodle = ({ svgString, className }: { svgString: string, classNam
 };
 
 
-const AdventureStepCard = ({ hotspot, onClick }: { hotspot: Hotspot, onClick: () => void }) => {
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8, y: 20 },
-    visible: { opacity: 1, scale: 1, y: 0 },
-  };
-
-  return (
-    <motion.div
-      variants={cardVariants}
-      whileHover={{ scale: 1.05, y: -5 }}
-      transition={{ type: 'spring', stiffness: 300 }}
-      className="bg-white p-4 rounded-2xl border-4 border-dashed border-purple-400 flex flex-col items-center gap-4 shadow-xl w-48 text-center flex-shrink-0 cursor-pointer"
-      onClick={onClick} // Set the click handler
-    >
-      <div className="w-full h-32 doodle-container p-2">
-        <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} />
-      </div>
-      <div className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-3 py-2 rounded-xl w-full flex-grow flex items-center justify-center">
-        <p className="text-xs font-bold uppercase tracking-wider">{hotspot.pop_up_text}</p>
-      </div>
-    </motion.div>
-  );
-};
-
-// --- NEW COMPONENT: The Description Popup Modal ---
-const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClose: () => void }) => {
-  if (!hotspot) return null;
-
+// --- GAME OVER SCREEN COMPONENT ---
+const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () => void }) => {
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -47,37 +23,59 @@ const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClo
   };
 
   const modalVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.8 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { animate: 'spring', stiffness: 300, damping: 25 } },
-    exit: { opacity: 0, y: 50, scale: 0.8 },
+    hidden: { opacity: 0, scale: 0.7 },
+    visible: { opacity: 1, scale: 1, transition: { animate: 'spring', stiffness: 250, damping: 20 } },
+    exit: { opacity: 0, scale: 0.7 },
   };
 
   return (
-    <motion.div
-      variants={backdropVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose} // Close modal on backdrop click
-    >
-      <motion.div
-        variants={modalVariants}
-        className="bg-white p-6 rounded-3xl border-4 border-dashed border-blue-500 shadow-2xl w-full max-w-md text-center"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
-      >
-        <div className="w-48 h-48 mx-auto doodle-container mb-4">
-          <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} />
-        </div>
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">{hotspot.pop_up_text}</h3>
-        <p className="text-gray-600 leading-relaxed">{hotspot.summary}</p>
-        <button
-          onClick={onClose}
-          className="mt-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-2 px-6 rounded-xl shadow-lg hover:scale-105 transition-transform"
-        >
-          Got it!
+    <motion.div variants={backdropVariants} initial="hidden" animate="visible" exit="exit" className="game-over-overlay">
+      <motion.div variants={modalVariants} className={`game-over-content ${didWin ? 'win' : 'loss'}`}>
+        <div className="game-over-emoji">{didWin ? '🎉' : '🤔'}</div>
+        <h2 className={`game-over-title ${didWin ? 'win' : 'loss'}`}>
+          {didWin ? 'You Won!' : 'Try Again!'}
+        </h2>
+        <p className="game-over-message">
+          {didWin
+            ? 'Great job! You found all the correct steps for the adventure.'
+            : "Oops! It looks like you selected a step that wasn't part of the quest."}
+        </p>
+        <button onClick={onReplay} className="replay-button">
+          Replay
         </button>
       </motion.div>
+    </motion.div>
+  );
+};
+
+
+// --- INTERACTIVE CARD COMPONENT ---
+const AdventureStepCard = ({ hotspot, onValidate }: { hotspot: Hotspot, onValidate: (isValid: boolean) => void }) => {
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  
+  const handleValidationClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isCorrectChoice = hotspot.isValid === true;
+    setFeedback(isCorrectChoice ? 'correct' : 'incorrect');
+    onValidate(isCorrectChoice);
+  };
+
+  const feedbackClass = 
+    feedback === 'correct' ? 'border-green-500' :
+    feedback === 'incorrect' ? 'border-red-500' :
+    'border-purple-400';
+
+  return (
+    <motion.div
+      onClick={handleValidationClick}
+      className={`bg-white p-4 rounded-2xl border-4 border-dashed flex flex-col items-center gap-4 shadow-xl w-48 text-center flex-shrink-0 cursor-pointer transition-colors duration-300 ${feedbackClass}`}
+    >
+      <div className="w-full h-32 doodle-container p-2">
+        <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji' />
+      </div>
+      <div className="doodle-text">
+        <p className="doodle-label">{hotspot.pop_up_text}</p>
+      </div>
     </motion.div>
   );
 };
@@ -86,85 +84,93 @@ const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClo
 function ResultPage() {
   const [adventure, setAdventure] = useState<DoodleScene | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // NEW STATE: To track which hotspot is selected for the popup
-  const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
+  
+  // --- NEW GAME STATE MANAGEMENT ---
+  const [gameState, setGameState] = useState<'playing' | 'win' | 'loss'>('playing');
+  const [correctlySelected, setCorrectlySelected] = useState<Set<string>>(new Set());
+  
+  // Memoize the total number of valid hotspots to prevent recalculation
+  const totalValidHotspots = useMemo(() => {
+    return adventure?.hotspots.filter(h => h.isValid).length || 0;
+  }, [adventure]);
 
-  useEffect(() => {
+  // Function to load and shuffle data
+  const loadAdventure = () => {
     chrome.storage.session.get('adventureResult').then(data => {
       if (data.adventureResult && data.adventureResult.length > 0) {
-        setAdventure(data.adventureResult[0]);
+        const receivedAdventure = data.adventureResult[0];
+        const shuffledHotspots = shuffleArray(receivedAdventure.hotspots);
+        setAdventure({ ...receivedAdventure, hotspots: shuffledHotspots });
+        setGameState('playing');
+        setCorrectlySelected(new Set());
       } else {
         setError("Could not find the generated adventure. Please try creating one again!");
       }
     });
-  }, []);
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.3 },
-    },
   };
 
-  const fadeIn = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, animate: "easeOut" } },
+  useEffect(() => {
+    loadAdventure();
+  }, []); // Load on initial mount
+
+  const handleReplay = () => {
+    loadAdventure(); // Reload and reshuffle the data
   };
 
+  const handleValidation = (hotspot: Hotspot, isCorrect: boolean) => {
+    if (gameState !== 'playing') return;
+
+    if (!isCorrect) {
+      setGameState('loss'); // If they click an invalid card, they lose
+    } else {
+      const newCorrectlySelected = new Set(correctlySelected);
+      newCorrectlySelected.add(hotspot.pop_up_text);
+      setCorrectlySelected(newCorrectlySelected);
+
+      // Check for win condition
+      if (newCorrectlySelected.size === totalValidHotspots) {
+        setGameState('win');
+      }
+    }
+  };
+
+  // --- JSX for the page ---
   return (
     <div className="p-4 sm:p-8 bg-gradient-to-br from-yellow-100 to-orange-200 font-mono text-gray-900 min-h-screen w-full flex items-center justify-center">
-      {/* --- RENDER THE MODAL using AnimatePresence for smooth exit animations --- */}
       <AnimatePresence>
-        {selectedHotspot && (
-          <DescriptionModal 
-            hotspot={selectedHotspot} 
-            onClose={() => setSelectedHotspot(null)} 
-          />
+        {(gameState === 'win' || gameState === 'loss') && (
+          <GameOverScreen didWin={gameState === 'win'} onReplay={handleReplay} />
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {error && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 text-center text-red-600 font-bold text-2xl">{error}</motion.div>}
-        {!adventure && !error && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center min-h-screen text-2xl font-bold">Loading your adventure...</motion.div>}
+      <div className="max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
+        {error && <div>{error}</div>}
+        {!adventure && !error && <div>Loading your adventure...</div>}
         
         {adventure && (
-          <div className="max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
-            
-            <motion.header variants={fadeIn} initial="hidden" animate="visible" className="mb-8 w-full">
-              <h1 className="text-4xl sm:text-6xl font-black mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent capitalize tracking-tight">
-                {adventure.theme}
-              </h1>
-              <div className="w-32 h-2 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full shadow-lg mb-6"></div>
-              <motion.p variants={fadeIn} transition={{ delay: 0.2 }} className="max-w-3xl mx-auto text-lg text-gray-700 leading-relaxed">
-                <h2 className="text-xl sm:text-2xl font-semibold text-blue-700 italic text-center mb-2">
-                  {adventure.summary}
-                </h2>
-              </motion.p>
+          <div className="adventure-card">
+            <motion.header className="mt-8 w-full">
+              <h1 className="adventure-banner">{adventure.theme}</h1>
+              <div className="adventure-description">{adventure.summary}</div>
             </motion.header>
 
-            <motion.div 
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-col items-center gap-8 mt-8 w-full"
-            >
-              <motion.div variants={fadeIn} className="p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-dashed border-blue-500 shadow-2xl w-full max-w-lg">
-                <h2 className="text-2xl font-bold mb-4">The Main Scene</h2>
+            <motion.div className="flex flex-col items-center gap-8 mt-8 w-full">
+              <motion.div className="main-adventure-container">
+                <h2 className="main-adventure-heading">THEME</h2>
                 <div className="h-64 sm:h-80 doodle-container p-2">
-                  <GeneratedDoodle svgString={adventure.main_doodle_svg} />
+                  <GeneratedDoodle svgString={adventure.main_doodle_svg} className='emoji'/>
                 </div>
-                <p className="text-center text-md italic text-gray-600 mt-4">{adventure.doodle_description}</p>
+                <p className="main-scene-description">{adventure.doodle_description}</p>
               </motion.div>
 
-              <motion.div variants={fadeIn} className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl border-4 border-dashed border-purple-500 shadow-2xl w-full">
-                <h2 className="text-2xl font-bold mb-6 text-center">Quest Steps (Click a card to learn more!)</h2>
-                <div className="flex flex-nowrap gap-6 overflow-x-auto pb-4">
+              <motion.div className="quest-panel">
+                <h2 className="quest-heading">Select all valid Quests for "{adventure.theme}"</h2>
+                <div className="horizontal-scroll">
                   {adventure.hotspots.map((hotspot, index) => (                     
                     <AdventureStepCard 
-                      key={index}
+                      key={`${hotspot.pop_up_text}-${index}`} // A more stable key
                       hotspot={hotspot}
-                      onClick={() => setSelectedHotspot(hotspot)} // Set the selected hotspot on click
+                      onValidate={(isCorrect) => handleValidation(hotspot, isCorrect)}
                     />
                   ))}
                 </div>
@@ -172,7 +178,7 @@ function ResultPage() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }
