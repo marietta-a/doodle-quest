@@ -5,6 +5,7 @@ import './GameOver.css'; // The new CSS for the game over screen
 import { motion, AnimatePresence, animate } from 'framer-motion';
 import { shuffleArray } from './helpers/Functions';
 import { DoodleScene, Hotspot } from './ai/DoodleQuestAi';
+import { Difficulty, levelDifficulties } from './models/Difficulty';
 
 
 const GeneratedDoodle = ({ svgString, className }: { svgString: string, className?: string }) => {
@@ -13,6 +14,72 @@ const GeneratedDoodle = ({ svgString, className }: { svgString: string, classNam
   return <div className={className} dangerouslySetInnerHTML={{ __html: renderableSvg }} />;
 };
 
+// --- INTERACTIVE CARD COMPONENT ---
+const AdventureStepCard = ({ hotspot, handleDescription, handleValidation, isOnReplay}: { 
+  hotspot: Hotspot, 
+  handleDescription: () => void,
+  handleValidation: () => void,
+  isOnReplay: boolean
+}) => {
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  
+
+  const feedbackClass = 
+    feedback === 'correct' ? 'border-green-500' :
+    feedback === 'incorrect' ? 'border-red-500' :
+    'border-purple-400';
+
+  return (
+    <motion.div
+      onClick={handleDescription}
+      className={`bg-white p-4 rounded-2xl border-4 border-dashed flex flex-col items-center gap-4 shadow-xl w-48 text-center flex-shrink-0 cursor-pointer transition-colors duration-300 ${feedbackClass}`}
+    >
+      <ValidationButton hotspot={hotspot} handleValidation={handleValidation } isOnReplay={isOnReplay} />
+      <div className="w-full h-32 doodle-container p-2">
+        <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji' />
+      </div>
+      <div className="doodle-text">
+        <p className={`doodle-label`}>{hotspot.pop_up_text}</p>
+      </div>
+    </motion.div>
+  );
+};
+
+const ValidationButton = ({hotspot, handleValidation, isOnReplay} : {
+  hotspot: Hotspot, 
+  handleValidation: () => void,
+  isOnReplay: boolean
+}) => {
+  const [validationIcon, setValidationIcon] = useState<string | null>(null);
+  
+  const handleValidationClick = (e: React.MouseEvent, isValid: boolean) => {
+    e.stopPropagation(); // VERY IMPORTANT: Prevents the modal from opening when a button is clicked
+    setValidationIcon(isOnReplay ? null : (isValid ? '✅' : '❌'));
+    handleValidation();
+  };
+
+  return (
+    <div className="icon-btn-container">
+          <div className="flex-gap">
+            <button
+              onClick={(e) => handleValidationClick(e,  hotspot.isValid == true)}
+              className={`icon-btn icon-btn-success`}
+              title="Validation"
+            >
+            {validationIcon}
+          </button>
+          {/* <button
+            onClick={(e) => handleValidationClick(e, hotspot.isValid == true)}
+            className="icon-btn icon-btn-danger"
+            title="No"
+          >
+            
+          </button> */}
+        </div>  
+    </div>
+  );
+      
+};
 
 // --- GAME OVER SCREEN COMPONENT ---
 const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () => void }) => {
@@ -37,7 +104,7 @@ const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () =>
         </h2>
         <p className="game-over-message">
           {didWin
-            ? 'Great job! You found all the correct steps for the adventure.'
+            ? 'Great job! You found all the quests for the adventure.'
             : "Oops! It looks like you selected a step that wasn't part of the quest."}
         </p>
         <button onClick={onReplay} className="replay-button">
@@ -48,37 +115,47 @@ const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () =>
   );
 };
 
+const DescriptionModal = ({ hotspot, onClose, descriptionStyle }: { hotspot: Hotspot | null, onClose: () => void, descriptionStyle: string }) => {
+  if (!hotspot) return null;
 
-// --- INTERACTIVE CARD COMPONENT ---
-const AdventureStepCard = ({ hotspot, onValidate }: { hotspot: Hotspot, onValidate: (isValid: boolean) => void }) => {
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  
-  const handleValidationClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const isCorrectChoice = hotspot.isValid === true;
-    setFeedback(isCorrectChoice ? 'correct' : 'incorrect');
-    onValidate(isCorrectChoice);
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
   };
 
-  const feedbackClass = 
-    feedback === 'correct' ? 'border-green-500' :
-    feedback === 'incorrect' ? 'border-red-500' :
-    'border-purple-400';
-
-  return (
-    <motion.div
-      onClick={handleValidationClick}
-      className={`bg-white p-4 rounded-2xl border-4 border-dashed flex flex-col items-center gap-4 shadow-xl w-48 text-center flex-shrink-0 cursor-pointer transition-colors duration-300 ${feedbackClass}`}
-    >
-      <div className="w-full h-32 doodle-container p-2">
-        <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji' />
-      </div>
-      <div className="doodle-text">
-        <p className="doodle-label">{hotspot.pop_up_text}</p>
-      </div>
-    </motion.div>
-  );
-};
+  const modalVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.8 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { animate: 'spring', stiffness: 300, damping: 25 } },
+    exit: { opacity: 0, y: 50, scale: 0.8 },
+  };
+  
+    return (
+      <motion.div
+        variants={backdropVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="modal-overlay"
+        onClick={onClose} // Close modal on backdrop click
+      >
+        <motion.div
+          variants={modalVariants}
+          className="modal-content"
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+        >
+          <h3 className={`section-title ${descriptionStyle}`}>{hotspot.pop_up_text}</h3>
+          <p className={`relaxed-text ${descriptionStyle}`}>{hotspot. description}</p>
+          <button
+            onClick={onClose}
+            className="cta-button"
+          >
+            Got it!
+          </button>
+        </motion.div>
+      </motion.div>
+    );
+  };
 
 
 function ResultPage() {
@@ -87,7 +164,9 @@ function ResultPage() {
   
   // --- NEW GAME STATE MANAGEMENT ---
   const [gameState, setGameState] = useState<'playing' | 'win' | 'loss'>('playing');
+  const [difficulty, setDifficulty] = useState<Difficulty>(levelDifficulties[0]);
   const [correctlySelected, setCorrectlySelected] = useState<Set<string>>(new Set());
+  const [isOnReplay, setIsOnReplay] = useState<boolean>(false);
   
   // Memoize the total number of valid hotspots to prevent recalculation
   const totalValidHotspots = useMemo(() => {
@@ -109,6 +188,16 @@ function ResultPage() {
     });
   };
 
+  const loadDifficulty = () => {
+    chrome.storage.session.get('difficulty').then(data => {
+      if(data.difficulty){
+        setDifficulty(data.difficulty);
+      }else {
+        setError("Could not find the generated difficulty. Please try creating one again!");
+      }
+    })
+  }
+
   useEffect(() => {
     loadAdventure();
   }, []); // Load on initial mount
@@ -117,10 +206,10 @@ function ResultPage() {
     loadAdventure(); // Reload and reshuffle the data
   };
 
-  const handleValidation = (hotspot: Hotspot, isCorrect: boolean) => {
+  const handleValidation = (hotspot: Hotspot) => {
     if (gameState !== 'playing') return;
 
-    if (!isCorrect) {
+    if (!hotspot.isValid) {
       setGameState('loss'); // If they click an invalid card, they lose
     } else {
       const newCorrectlySelected = new Set(correctlySelected);
@@ -133,13 +222,14 @@ function ResultPage() {
       }
     }
   };
+  const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
 
   // --- JSX for the page ---
   return (
     <div className="p-4 sm:p-8 bg-gradient-to-br from-yellow-100 to-orange-200 font-mono text-gray-900 min-h-screen w-full flex items-center justify-center">
       <AnimatePresence>
         {(gameState === 'win' || gameState === 'loss') && (
-          <GameOverScreen didWin={gameState === 'win'} onReplay={handleReplay} />
+          <GameOverScreen didWin={gameState === 'win'} onReplay={() => {handleReplay}} />
         )}
       </AnimatePresence>
 
@@ -156,21 +246,41 @@ function ResultPage() {
 
             <motion.div className="flex flex-col items-center gap-8 mt-8 w-full">
               <motion.div className="main-adventure-container">
-                <h2 className="main-adventure-heading">THEME</h2>
+                <h1 className="text-primary main-adventure-heading "><u>THEME</u></h1>
+                <h2 className="text-primary main-adventure-heading ">{adventure.doodle_description}</h2>
                 <div className="h-64 sm:h-80 doodle-container p-2">
                   <GeneratedDoodle svgString={adventure.main_doodle_svg} className='emoji'/>
                 </div>
-                <p className="main-scene-description">{adventure.doodle_description}</p>
+                {/* <p className="main-scene-description">{adventure.doodle_description}</p> */}
               </motion.div>
 
+              
+            <AnimatePresence>
+              {selectedHotspot && (
+                <DescriptionModal 
+                  hotspot={selectedHotspot} 
+                  onClose={() => setSelectedHotspot(null)} 
+                  descriptionStyle={['easy', 'medium'].includes(difficulty.code) 
+                    ? (selectedHotspot.isValid ? 'text-success' : 'text-danger')
+                    : 'text-default'
+                  }
+                />
+              )}
+            </AnimatePresence>
+
+
               <motion.div className="quest-panel">
-                <h2 className="quest-heading">Select all valid Quests for "{adventure.theme}"</h2>
+                <h2 className="quest-heading adventure-description">
+                  Find all {adventure.hotspots.filter((b) => b.isValid)?.length} valid Quests for "{adventure.theme}"
+                </h2>
                 <div className="horizontal-scroll">
                   {adventure.hotspots.map((hotspot, index) => (                     
                     <AdventureStepCard 
                       key={`${hotspot.pop_up_text}-${index}`} // A more stable key
                       hotspot={hotspot}
-                      onValidate={(isCorrect) => handleValidation(hotspot, isCorrect)}
+                      handleDescription={() => setSelectedHotspot(hotspot)} 
+                      handleValidation= { () => handleValidation(hotspot)}     
+                      isOnReplay = {isOnReplay}               
                     />
                   ))}
                 </div>

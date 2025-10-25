@@ -1,3 +1,4 @@
+import { AdventurePayload } from "../models/Payloads";
 import { doodleGenerationPrompt } from "./PrompExamples";
 
 export interface Hotspot {
@@ -42,10 +43,7 @@ const doodleQuestSchema = {
   }
 };
 
-export async function generateDoodleAdventure(
-  pageContent: string,
-  progressCallback: (progress: number) => void
-): Promise<DoodleScene[]> {
+export async function generateDoodleAdventure({pageContent, progressCallback, language, difficulty}: AdventurePayload): Promise<DoodleScene[]> {
   // @ts-ignore
   if (!self.LanguageModel) {
     throw new Error("Your browser does not support the LanguageModel API.");
@@ -62,7 +60,7 @@ export async function generateDoodleAdventure(
     const session = await self.LanguageModel.create({ 
       modelId: 'gemini-nano',
       expectedInputs: [ { type: "text", languages: ["en", "en"] }, { type: "image" } ],
-      expectedOutputs: [ { type: "text", languages: ["en"] } ],
+      expectedOutputs: [ { type: "text", languages: [language.code] } ],
       monitor(m: any) {
         m.addEventListener('downloadprogress', (e: any) => {
           const progress = e.loaded ? Math.round(e.loaded * 100) : 0;
@@ -74,7 +72,7 @@ export async function generateDoodleAdventure(
 
 
     const jsonResponse = await session.prompt(
-      doodleGenerationPrompt(`"""${pageContent.substring(0, 4000)}"""`),
+      doodleGenerationPrompt(`"""${pageContent.substring(0, 4000)}"""`, difficulty, language),
       { responseConstraint: doodleQuestSchema }
     );
     
@@ -83,7 +81,6 @@ export async function generateDoodleAdventure(
 
     
     session.destroy();
-    console.log(adventureData);
     return adventureData;
 
   } catch (error) {

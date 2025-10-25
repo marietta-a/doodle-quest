@@ -257,8 +257,14 @@
   color: #b91c1c;                /* text-green-700 */
   font-size: large;
 }
-.text-default {
+
+.text-primary {
   color: #3b82f6;
-  font-size: x-larger;
+  font-size: x-large;
+}
+
+.text-default{
+  color: gray;
+  font-size: large;
 }
 
