@@ -9,13 +9,13 @@ export const languages: Language[] = [
     code: "en",
     description: "English"
  },
- {
-    code: "es",
-    description: "Spanish"
- },
- {
-    code: "ja",
-    description: "Japanese"
- },
+//  {
+//     code: "es",
+//     description: "Spanish"
+//  },
+//  {
+//     code: "ja",
+//     description: "Japanese"
+//  },
 
 ];

@@ -71,7 +71,6 @@ function App() {
   const updateDifficulty = (value: string) => {
     try{
       var diff = levelDifficulties.find((b) => b.code == value);
-      console.log('difficulty');
       console.log({diff});
       if(diff){
         setDifficulty(diff);

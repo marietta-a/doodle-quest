@@ -1,13 +1,21 @@
 import { Difficulty } from "../models/Difficulty";
+import { Language } from "../models/Language";
 
-const getDistractors = (difficulty: Difficulty) => {
+const getNumDistractors = (difficulty: Difficulty) => {
   return `
      ${difficulty.code === "easy" ? 2 : (difficulty.code == "medium" 
       ? 4 : (difficulty.code === "intermediate" ? 7 : 10))};
   `;
 }
 
-export const doodleGenerationPrompt = (pageContent: string, difficulty: Difficulty) => `
+const getNumHospots = (difficulty: Difficulty) => {
+  return `
+     ${difficulty.code === "easy" ? 5 : (difficulty.code == "medium" 
+      ? 9 : (difficulty.code === "intermediate" ? 12 : 15))};
+  `;
+}
+
+export const doodleGenerationPrompt = (pageContent: string, difficulty: Difficulty, language: Language) => `
   CRITICAL INSTRUCTIONS: You are an AI assistant that creates fun, educational adventures 
   for kids or teenagers or adults based on the age group (${difficulty.ageRange}) using emojis, including some silly, unrelated steps to make it a game. Your ONLY job is to generate a valid JSON array.
   The complexity of the of the adventure should be ${difficulty.description} with prompts for people within the ${difficulty.ageRange} age group
@@ -68,7 +76,7 @@ export const doodleGenerationPrompt = (pageContent: string, difficulty: Difficul
   1.  Read the following text carefully.
 
   2.  Create a 'theme', a 'summary', and a 'doodle_description'.
-  3.  Generate 14 hotspots based on the theme. **Crucially, ${getDistractors(difficulty)} of these hotspots MUST be silly and unrelated to the theme, with their 'isValid' property set to false.**
+  3.  Generate ${getNumHospots(difficulty)} hotspots based on the theme. **Crucially, ${getNumDistractors(difficulty)} of these hotspots MUST be silly and unrelated to the theme, with their 'isValid' property set to false.**
   4.  For each hotspot, create a 'pop_up_text', a combination of emojis ('hotspot_emoji'), and a 'description'.
   5.  **For INVALID hotspots (isValid: false), the 'description' MUST explain WHY that step is silly and does not belong in the adventure.**
   6.  Combine everything into a single JSON array, following all the rules and the style of the Golden Example.

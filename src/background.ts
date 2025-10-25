@@ -21,7 +21,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           }
         );
 
-        await chrome.storage.session.set({ adventureResult });
+        await chrome.storage.session.set({ 
+          adventureResult,
+          language: message.data.language,
+          difficulty: message.data.difficulty 
+        });
         await chrome.tabs.create({ url: 'result.html' });
 
       } catch (e: any) {

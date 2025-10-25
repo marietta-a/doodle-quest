@@ -5,6 +5,7 @@ import './GameOver.css'; // The new CSS for the game over screen
 import { motion, AnimatePresence, animate } from 'framer-motion';
 import { shuffleArray } from './helpers/Functions';
 import { DoodleScene, Hotspot } from './ai/DoodleQuestAi';
+import { Difficulty, levelDifficulties } from './models/Difficulty';
 
 
 const GeneratedDoodle = ({ svgString, className }: { svgString: string, className?: string }) => {
@@ -109,9 +110,8 @@ const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () =>
   );
 };
 
-const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClose: () => void }) => {
+const DescriptionModal = ({ hotspot, onClose, descriptionStyle }: { hotspot: Hotspot | null, onClose: () => void, descriptionStyle: string }) => {
   if (!hotspot) return null;
-
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -138,8 +138,8 @@ const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClo
           className="modal-content"
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
         >
-          <h3 className={`section-title ${hotspot.isValid ? 'text-success' : 'text-danger'}`}>{hotspot.pop_up_text}</h3>
-          <p className={`relaxed-text ${hotspot.isValid ? 'text-success' : 'text-danger'}`}>{hotspot. description}</p>
+          <h3 className={`section-title ${descriptionStyle}`}>{hotspot.pop_up_text}</h3>
+          <p className={`relaxed-text ${descriptionStyle}`}>{hotspot. description}</p>
           <button
             onClick={onClose}
             className="cta-button"
@@ -154,6 +154,7 @@ const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClo
 
 function ResultPage() {
   const [adventure, setAdventure] = useState<DoodleScene | null>(null);
+  const [difficulty, setDifficulty] = useState<Difficulty>(levelDifficulties[0]);
   const [error, setError] = useState<string | null>(null);
   
   // --- NEW GAME STATE MANAGEMENT ---
@@ -179,13 +180,24 @@ function ResultPage() {
       }
     });
   };
+  // Function to load and shuffle data
+  const loadDifficulty = () => {
+    chrome.storage.session.get('difficulty').then(data => {
+      if (data.difficulty) {
+        setDifficulty(data.difficulty);
+      } else {
+        setError("Could not find the generated adventure. Please try creating one again!");
+      }
+    });
+  };
 
   useEffect(() => {
     loadAdventure();
+    loadDifficulty();
   }, []); // Load on initial mount
 
   const handleReplay = () => {
-    loadAdventure(); // Reload and reshuffle the data
+    window.location.reload();
   };
 
   const handleValidation = (hotspot: Hotspot) => {
@@ -228,8 +240,8 @@ function ResultPage() {
 
             <motion.div className="flex flex-col items-center gap-8 mt-8 w-full">
               <motion.div className="main-adventure-container">
-                <h1 className="text-default main-adventure-heading "><u>THEME</u></h1>
-                <h2 className="text-default main-adventure-heading ">{adventure.doodle_description}</h2>
+                <h1 className="text-default main-adventure-heading ">THEME</h1>
+                <h2 className="text-default main-adventure-heading "><u>{adventure.doodle_description}</u></h2>
                 <div className="h-64 sm:h-80 doodle-container p-2">
                   <GeneratedDoodle svgString={adventure.main_doodle_svg} className='emoji'/>
                 </div>
@@ -242,6 +254,9 @@ function ResultPage() {
                 <DescriptionModal 
                   hotspot={selectedHotspot} 
                   onClose={() => setSelectedHotspot(null)} 
+                  descriptionStyle={['easy', 'medium'].includes(difficulty.code) 
+                    ? (selectedHotspot.isValid ? 'text-success' : 'text-danger')
+                    : 'text-default' }
                 />
               )}
             </AnimatePresence>
