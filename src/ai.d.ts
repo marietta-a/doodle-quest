@@ -45,22 +45,22 @@ interface DownloadProgressEvent extends Event {
   total: number;
 }
 
-interface LanguageModel {
-  availability(): Promise<LanguageModelAvailability>;
-  params(): Promise<{
-    defaultTopK: number;
-    maxTopK: number;
-    defaultTemperature: number;
-    maxTemperature: number;
-  }>;
-  create(options?: {
-    monitor?: (monitor: EventTarget) => void;
-    temperature?: number;
-    topK?: number;
-    signal?: AbortSignal;
-    initialPrompts?: { role: string; content: string }[];
-  }): Promise<TextSession>;
-}
+// interface LanguageModel {
+//   availability(): Promise<LanguageModelAvailability>;
+//   params(): Promise<{
+//     defaultTopK: number;
+//     maxTopK: number;
+//     defaultTemperature: number;
+//     maxTemperature: number;
+//   }>;
+//   create(options?: {
+//     monitor?: (monitor: EventTarget) => void;
+//     temperature?: number;
+//     topK?: number;
+//     signal?: AbortSignal;
+//     initialPrompts?: { role: string; content: string }[];
+//   }): Promise<TextSession>;
+// }
 
 interface TextSession {
   prompt(prompt: string | { role: string; content: string }[], options?: {

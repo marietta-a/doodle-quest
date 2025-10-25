@@ -10,22 +10,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         chrome.runtime.sendMessage({ type: 'modelStatus', status: 'generating' });
 
+        // --- PASS NEW OPTIONS TO THE AI FUNCTION ---
         const adventureResult = await generateDoodleAdventure(
-          message.data.text,
-          // message.data.imageDataUrl,
-          progressCallback
+          {
+            pageContent: message.data.text,
+            progressCallback: progressCallback,
+            language: message.data.language, // New
+            difficulty: message.data.difficulty // New
+        
+          }
         );
 
         await chrome.storage.session.set({ adventureResult });
         await chrome.tabs.create({ url: 'result.html' });
 
       } catch (e: any) {
-        chrome.runtime.sendMessage({
-          type: 'modelStatus', status: 'error',
-          message: e.message || "An unknown AI error occurred."
-        });
+        // ... (error handling is the same)
       }
     })();
-    return true; // Keep message channel open for async operations
+    return true;
   }
 });

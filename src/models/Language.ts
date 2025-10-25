@@ -1,10 +1,10 @@
-interface LanguageModel{
-    code: String;
-    description: String;
+export interface Language{
+    code: string;
+    description: string;
 }
 
 
-export const languages: LanguageModel[] = [
+export const languages: Language[] = [
  {
     code: "en",
     description: "English"
