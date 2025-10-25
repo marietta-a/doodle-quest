@@ -37,7 +37,7 @@ const AdventureStepCard = ({ hotspot, handleDescription, handleValidation}: {
         <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji' />
       </div>
       <div className="doodle-text">
-        <p className="doodle-label">{hotspot.pop_up_text}</p>
+        <p className={`doodle-label`}>{hotspot.pop_up_text}</p>
       </div>
     </motion.div>
   );
@@ -98,7 +98,7 @@ const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () =>
         </h2>
         <p className="game-over-message">
           {didWin
-            ? 'Great job! You found all the correct steps for the adventure.'
+            ? 'Great job! You found all the quests for the adventure.'
             : "Oops! It looks like you selected a step that wasn't part of the quest."}
         </p>
         <button onClick={onReplay} className="replay-button">
@@ -138,8 +138,8 @@ const DescriptionModal = ({ hotspot, onClose }: { hotspot: Hotspot | null, onClo
           className="modal-content"
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
         >
-          <h3 className="section-title">{hotspot.pop_up_text}</h3>
-          <p className="relaxed-text">{hotspot. description}</p>
+          <h3 className={`section-title ${hotspot.isValid ? 'text-success' : 'text-danger'}`}>{hotspot.pop_up_text}</h3>
+          <p className={`relaxed-text ${hotspot.isValid ? 'text-success' : 'text-danger'}`}>{hotspot. description}</p>
           <button
             onClick={onClose}
             className="cta-button"
@@ -247,7 +247,9 @@ function ResultPage() {
 
 
               <motion.div className="quest-panel">
-                <h2 className="quest-heading">Select all valid Quests for "{adventure.theme}"</h2>
+                <h2 className="quest-heading adventure-description">
+                  Find all {adventure.hotspots.filter((b) => b.isValid)?.length} valid Quests for "{adventure.theme}"
+                </h2>
                 <div className="horizontal-scroll">
                   {adventure.hotspots.map((hotspot, index) => (                     
                     <AdventureStepCard 
