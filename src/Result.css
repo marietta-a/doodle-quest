@@ -216,19 +216,20 @@
   background-color: #dcfce7;     /* bg-green-100 */
   padding: 4px;
   margin: 4px;
-  
+  border-color: border-purple-400;
 }
 
 .icon-btn-success {
   color: #15803d;                /* text-green-700 */
+  border-color: border-green-500;
 }
-
 .icon-button-success:hover {
   background-color: #bbf7d0;     /* hover:bg-green-200 */
 }
 
 .icon-btn-danger {
   color: #b91c1c;                /* text-green-700 */
+  border-color: border-red-500;
 }
 .icon-btn-danger:hover {
   color: #fecaca;              /* text-green-700 */
@@ -247,6 +248,17 @@
   gap: 0.5rem;             /* gap-2 */
 }
 
+.text-success {
+  color: #15803d;                /* text-green-700 */
+  font-size: large;
+}
 
-
+.text-danger {
+  color: #b91c1c;                /* text-green-700 */
+  font-size: large;
+}
+.text-default {
+  color: #3b82f6;
+  font-size: x-larger;
+}
 
