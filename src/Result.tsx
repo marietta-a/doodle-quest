@@ -228,11 +228,12 @@ function ResultPage() {
 
             <motion.div className="flex flex-col items-center gap-8 mt-8 w-full">
               <motion.div className="main-adventure-container">
-                <h2 className="main-adventure-heading">THEME</h2>
+                <h1 className="text-default main-adventure-heading ">THEME</h1>
+                <h2 className="text-default main-adventure-heading "><u>{adventure.doodle_description}</u></h2>
                 <div className="h-64 sm:h-80 doodle-container p-2">
                   <GeneratedDoodle svgString={adventure.main_doodle_svg} className='emoji'/>
                 </div>
-                <p className="main-scene-description">{adventure.doodle_description}</p>
+                {/* <p className="main-scene-description">{adventure.doodle_description}</p> */}
               </motion.div>
 
               

@@ -257,5 +257,8 @@
   color: #b91c1c;                /* text-green-700 */
   font-size: large;
 }
-
+.text-default {
+  color: #3b82f6;
+  font-size: x-larger;
+}
 
