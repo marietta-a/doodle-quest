@@ -33,12 +33,12 @@ const AdventureStepCard = ({ hotspot, handleDescription, handleValidation}: {
       onClick={handleDescription}
       className={`bg-white p-4 rounded-2xl border-4 border-dashed flex flex-col items-center gap-4 shadow-xl w-48 text-center flex-shrink-0 cursor-pointer transition-colors duration-300 ${feedbackClass}`}
     >
-      <ValidationButton hotspot={hotspot} handleValidation={handleValidation }  />
       <div className="w-full h-32 doodle-container p-2">
-        <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji' />
+        <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji-small' />
       </div>
-      <div className="doodle-text">
-        <p className={`doodle-label`}>{hotspot.pop_up_text}</p>
+      <div className="doodle-text" title=''>
+        <p className={`doodle-label`} title='Check the button if quest is valid'>{hotspot.pop_up_text}</p>
+        <ValidationButton hotspot={hotspot} handleValidation={handleValidation }  />
       </div>
     </motion.div>
   );
@@ -59,7 +59,7 @@ const ValidationButton = ({hotspot, handleValidation} : {hotspot: Hotspot, handl
             <button
               onClick={(e) => handleValidationClick(e,  hotspot.isValid == true)}
               className={`icon-btn icon-btn-success`}
-              title="Validation"
+              title="Check the button if quest is valid"
             >
             {validationIcon}
           </button>
@@ -77,7 +77,7 @@ const ValidationButton = ({hotspot, handleValidation} : {hotspot: Hotspot, handl
 };
 
 // --- GAME OVER SCREEN COMPONENT ---
-const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () => void }) => {
+const GameOverScreen = ({ didWin, onReplay, hotspot }: { didWin: boolean, onReplay: () => void, hotspot: Hotspot | null }) => {
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -95,12 +95,12 @@ const GameOverScreen = ({ didWin, onReplay }: { didWin: boolean, onReplay: () =>
       <motion.div variants={modalVariants} className={`game-over-content ${didWin ? 'win' : 'loss'}`}>
         <div className="game-over-emoji">{didWin ? '🎉' : '🤔'}</div>
         <h2 className={`game-over-title ${didWin ? 'win' : 'loss'}`}>
-          {didWin ? 'You Won!' : 'Try Again!'}
+          {didWin ? 'You Won!' : 'Game Over!'}
         </h2>
         <p className="game-over-message">
           {didWin
             ? 'Great job! You found all the quests for the adventure.'
-            : "Oops! It looks like you selected a step that wasn't part of the quest."}
+            : `Oops! The quest you selected is invalid. `}
         </p>
         <button onClick={onReplay} className="replay-button">
           Replay
@@ -201,6 +201,7 @@ function ResultPage() {
   };
 
   const handleValidation = (hotspot: Hotspot) => {
+    setSelectedHotspot(hotspot);
     if (gameState !== 'playing') return;
 
     if (!hotspot.isValid) {
@@ -220,68 +221,77 @@ function ResultPage() {
 
   // --- JSX for the page ---
   return (
-    <div className="p-4 sm:p-8 bg-gradient-to-br from-yellow-100 to-orange-200 font-mono text-gray-900 min-h-screen w-full flex items-center justify-center">
-      <AnimatePresence>
-        {(gameState === 'win' || gameState === 'loss') && (
-          <GameOverScreen didWin={gameState === 'win'} onReplay={handleReplay} />
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
-        {error && <div>{error}</div>}
-        {!adventure && !error && <div>Loading your adventure...</div>}
-        
-        {adventure && (
-          <div className="adventure-card">
-            <motion.header className="mt-8 w-full">
-              <h1 className="adventure-banner">{adventure.theme}</h1>
-              <div className="adventure-description">{adventure.summary}</div>
-            </motion.header>
-
-            <motion.div className="flex flex-col items-center gap-8 mt-8 w-full">
-              <motion.div className="main-adventure-container">
-                <h1 className="text-default main-adventure-heading ">THEME</h1>
-                <h2 className="text-default main-adventure-heading "><u>{adventure.doodle_description}</u></h2>
-                <div className="h-64 sm:h-80 doodle-container p-2">
-                  <GeneratedDoodle svgString={adventure.main_doodle_svg} className='emoji'/>
-                </div>
-                {/* <p className="main-scene-description">{adventure.doodle_description}</p> */}
-              </motion.div>
-
-              
-            <AnimatePresence>
-              {selectedHotspot && (
-                <DescriptionModal 
-                  hotspot={selectedHotspot} 
-                  onClose={() => setSelectedHotspot(null)} 
-                  descriptionStyle={['easy', 'medium'].includes(difficulty.code) 
-                    ? (selectedHotspot.isValid ? 'text-success' : 'text-danger')
-                    : 'text-default' }
-                />
-              )}
-            </AnimatePresence>
-
-
-              <motion.div className="quest-panel">
-                <h2 className="quest-heading adventure-description">
-                  Find all {adventure.hotspots.filter((b) => b.isValid)?.length} valid Quests for "{adventure.theme}"
-                </h2>
-                <div className="horizontal-scroll">
-                  {adventure.hotspots.map((hotspot, index) => (                     
-                    <AdventureStepCard 
-                      key={`${hotspot.pop_up_text}-${index}`} // A more stable key
-                      hotspot={hotspot}
-                      handleDescription={() => setSelectedHotspot(hotspot)} 
-                      handleValidation= { () => handleValidation(hotspot)}                    
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        )}
+    <>
+      {
+        adventure && <div className='adventure-header'>
+          <h1 className="adventure-banner text-primary">{adventure.theme}</h1>
       </div>
-    </div>
+      }
+      <div className="page">
+        <AnimatePresence>
+          {(gameState === 'win' || gameState === 'loss') && (
+            <GameOverScreen didWin={gameState === 'win'} onReplay={handleReplay} hotspot={selectedHotspot} />
+          )}
+        </AnimatePresence>
+
+        <div className="main-container">
+          {error && <div>{error}</div>}
+          {!adventure && !error && <div>Loading your adventure...</div>}
+          
+          {adventure && (
+            <div className="adventure-card">
+              <motion.header className="adventure-banner">
+                <div className="adventure-theme-panel">
+                  <p className='quest-heading '>{adventure.summary}</p>
+                  <motion.div className="main-adventure-container">
+                    <h1 className="text-primary main-adventure-heading ">THEME</h1>
+                    <h2 className="text-primary main-adventure-heading "><u>{adventure.doodle_description}</u></h2>
+                    <div className="h-64 sm:h-80 doodle-container p-2">
+                      <GeneratedDoodle svgString={adventure.main_doodle_svg} className='emoji-small'/>
+                    </div>
+                    {/* <p className="main-scene-description">{adventure.doodle_description}</p> */}
+                  </motion.div>
+                </div>
+              </motion.header>
+
+              <motion.div className="quest-container">
+
+                
+              <AnimatePresence>
+                {selectedHotspot && (
+                  <DescriptionModal 
+                    hotspot={selectedHotspot} 
+                    onClose={() => setSelectedHotspot(null)} 
+                    // descriptionStyle={['easy', 'medium'].includes(difficulty.code) 
+                    //   ? (selectedHotspot.isValid ? 'text-success' : 'text-danger')
+                    //   : 'text-default' }
+                    descriptionStyle={selectedHotspot.isValid ? 'text-success' : 'text-danger'}
+                  />
+                )}
+              </AnimatePresence>
+
+
+                <motion.div className="quest-panel">
+                  <h2 className="quest-heading adventure-theme-panel">
+                    Find all {adventure.hotspots.filter((b) => b.isValid)?.length} valid Quests for "{adventure.theme}"
+                  </h2>
+                  <div className="horizontal-scroll">
+                    {adventure.hotspots.map((hotspot, index) => (                     
+                      <AdventureStepCard 
+                        key={`${hotspot.pop_up_text}-${index}`} // A more stable key
+                        hotspot={hotspot}
+                        handleDescription={() => setSelectedHotspot(hotspot)} 
+                        handleValidation= { () => handleValidation(hotspot)}                    
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 

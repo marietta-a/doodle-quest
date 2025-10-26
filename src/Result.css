@@ -16,55 +16,42 @@
   object-fit: contain;
   fill: none;
 }
-
-.adventure-card {
-  background-color: white;
+.page {
   padding: 1rem; /* p-4 */
-  border-radius: 1rem; /* rounded-2xl */
-  border: 4px dashed #a855f7; /* border-purple-400 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem; /* gap-4 */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-              0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
-  width: 90vw; 
-  text-align: center;
-}
-.adventure-banner {
-  /* background-image: linear-gradient(to right, #8b5cf6, #4f46e5); */
-  color: linear-gradient(to right, #8b5cf6, #4f46e5);
-  padding: 0.75rem 0.75rem; /* px-3 py-2 */
-  border-radius: 0.75rem; /* rounded-xl */
-  width: auto;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.adventure-description {
-  font-size: 1rem; /* text-md */
 }
 
 @media (min-width: 640px) {
-  .adventure-description {
-    font-size: 1.125rem; /* sm:text-lg */
+  .page {
+    padding: 2rem; /* sm:p-8 */
   }
 }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-.adventure-description {
-  color: #1f2937; /* text-gray-800 */
-  background-color: #fef9c3; /* bg-yellow-100 */
-  border-radius: 0.75rem; /* rounded-xl */
-  padding: 0.75rem 1rem; /* py-3 px-4 */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-              0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-  max-width: 42rem; /* max-w-2xl */
-  margin-left: auto; /* mx-auto */
+.page {
+  background-image: linear-gradient(to bottom right, #fef3c7, #fdba74);
+  font-family: monospace;
+  color: #1f2937;
+  min-height: 100vh; /* mt-8 */
+  width: 95vw;                   /* w-full */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.main-container {
+  max-width: 80rem;     
+  margin-left: auto;             /* mx-auto */
   margin-right: auto;
-  text-align: center;
-  line-height: 1.625; /* leading-relaxed */
+  display: flex;                 /* flex */
+  flex-direction: column;       /* flex-col */
+  align-items: center;          /* items-center */
+  justify-content: center;      /* justify-center */
+  text-align: center;           /* text-center */
 }
 .main-adventure-container {
   padding: 1.5rem; /* p-6 */
@@ -82,6 +69,88 @@
   margin-bottom: 1rem;     /* mb-4 */
 }
 
+
+
+.adventure-header {
+  margin-top: 2rem;              /* mt-8 */
+  width: auto;                   /* w-full */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;             /* horizontal breathing room */
+  background: linear-gradient(to right, #fef3c7, #fdba74); /* soft yellow-orange gradient */
+  border-radius: 0.75rem;        /* rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* subtle depth */
+  font-family: 'Comic Neue', cursive; /* playful font (fallback to sans-serif if needed) */
+  color: #1f2937;                /* text-gray-900 */
+}
+
+
+.adventure-card {
+  background-color: white;
+  padding: 1rem; /* p-4 */
+  border-radius: 1rem; /* rounded-2xl */
+  border: 4px dashed #a855f7; /* border-purple-400 */
+  align-items: center;
+  gap: 1rem; /* gap-4 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+  width: 90vw; 
+  text-align: center;
+}
+.adventure-banner {
+  /* background-image: linear-gradient(to right, #8b5cf6, #4f46e5); */
+  color: linear-gradient(to right, #8b5cf6, #4f46e5);
+  padding: 0.75rem 0.75rem; /* px-3 py-2 */
+  border-radius: 0.75rem; /* rounded-xl */
+  width: auto;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Comic Neue', cursive;
+}
+
+
+
+@media (min-width: 640px) {
+  .adventure-theme-panel {
+    font-size: 1.125rem; /* sm:text-lg */
+  }
+}
+
+.adventure-theme-panel {
+  color: #1f2937; /* text-gray-800 */
+  background-color: #fef9c3; /* bg-yellow-100 */
+  border-radius: 0.75rem; /* rounded-xl */
+  padding: 0.75rem 1rem; /* py-3 px-4 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  margin-left: auto; /* mx-auto */
+  margin-right: auto;
+  width: fit-content;
+  text-align: center;
+  line-height: 1.625; /* leading-relaxed */
+  font-family: 'Comic Neue', cursive;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
+.quest-container {
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: #fffaf0; /* soft background for contrast */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+}
+
+
 .quest-panel {
   padding: 1.5rem; /* p-6 */
   background-color: rgba(255, 255, 255, 0.8); /* bg-white/80 */
@@ -89,7 +158,7 @@
   border-radius: 1.5rem; /* rounded-3xl */
   border: 4px dashed #a855f7; /* border-purple-500 */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
-  width: 80vw; 
+  width: auto; 
   margin: 10px;
 }
 .quest-heading {
@@ -122,6 +191,9 @@
 }
 .emoji{
   font-size: 150px;
+}
+.emoji-small{
+  font-size: 90px;
 }
 .doodle-label {
   font-size: 0.75rem;       /* text-xs */
@@ -205,18 +277,19 @@
 }
 
 .icon-btn {
-  border-radius: 9999px;         /* rounded-full */
-  width: 2rem;                   /* w-8 */
-  height: 2rem;                  /* h-8 */
+  /* border-radius: 9999px;         */
+  width: 3rem;                   /* w-8 */
+  height: 3rem;                  /* h-8 */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.125rem;           /* text-lg */
   transition: background-color 0.2s ease; /* transition */
-  background-color: #dcfce7;     /* bg-green-100 */
+  background-color: white;     /* bg-green-100 */
   padding: 4px;
   margin: 4px;
-  border-color: border-purple-400;
+  border-color: turquoise;
+  border-width: 4px;
 }
 
 .icon-btn-success {
