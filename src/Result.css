@@ -167,6 +167,8 @@ html, body {
   margin-bottom: 1.5rem;   /* mb-6 */
   text-align: center;      /* text-center */
 }
+
+
 .horizontal-scroll {
   display: flex;
   flex-wrap: wrap;         /* flex-nowrap */
@@ -176,31 +178,53 @@ html, body {
   align-content: center;
   justify-content: center;
 }
+
+
 .doodle-text {
-  background-image: linear-gradient(to right, #8b5cf6, #4f46e5); /* from-purple-500 to-indigo-600 */
-  color: white;
-  padding: 0.5rem 0.75rem; /* py-2 px-3 */
-  border-radius: 0.75rem; /* rounded-xl */
+  /* background-image: linear-gradient(to right, #8b5cf6, #4f46e5); */
+  background-image: linear-gradient(to right, #3b82f6, #06b6d4); /* from-blue-500 to-cyan-500 */
+  color: #ffffff;                        /* High contrast text */
+  padding: 0.5rem 0.75rem;              /* py-2 px-3 */
+  border-radius: 0.75rem;               /* rounded-xl */
   width: auto;
   flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 2px;
-  font-size: large;
+  font-size: 1.125rem;                  /* large = 18px */
+  line-height: 1.5;                     /* improves readability */
+  font-family: 'Comic Neue', cursive, sans-serif;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* subtle depth for focus */
+  transition: background 0.3s ease;
 }
+
+/* Accessibility: Focus and hover states */
+.doodle-text:focus,
+.doodle-text:hover {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  background-image: linear-gradient(to right, #7c3aed, #4338ca); /* darker for hover/focus */
+  cursor: pointer;
+}
+
+.doodle-label {
+  font-size: large;       /* text-xs */
+  font-weight: 700;         /* font-bold */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.05em;   /* tracking-wider */
+}
+
+
 .emoji{
   font-size: 150px;
 }
 .emoji-small{
   font-size: 90px;
 }
-.doodle-label {
-  font-size: 0.75rem;       /* text-xs */
-  font-weight: 700;         /* font-bold */
-  text-transform: uppercase; /* uppercase */
-  letter-spacing: 0.05em;   /* tracking-wider */
-}
+
+
 .main-scene-description {
   text-align: center;         /* text-center */
   font-size: 1rem;            /* text-md */
@@ -209,6 +233,8 @@ html, body {
   margin-top: 1rem;  
   font-weight: 700;   
 }
+
+
 .extension-popup {
   width: 20rem;              /* w-80 */
   padding: 1rem;             /* p-4 */
@@ -308,7 +334,7 @@ html, body {
   color: #fecaca;              /* text-green-700 */
 }
 .icon-btn-container {
-  width: 100%;                  /* w-full */
+  width: auto;                  /* w-full */
   display: flex;                /* flex */
   justify-content: space-around; /* justify-around */
   align-items: center;          /* items-center */
@@ -338,6 +364,8 @@ html, body {
 
 .text-default{
   color: gray;
+}
+.text-large {
   font-size: large;
 }
 
