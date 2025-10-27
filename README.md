@@ -66,7 +66,7 @@ To get a local copy up and running, follow these simple steps.
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/your-username/doodle-quest.git
+    https://github.com/marietta-a/doodle-quest.git
     ```
 2.  **Navigate into the project directory:**
     ```sh
