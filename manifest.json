@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Doodle Quest",
+  "name": "DoodleQuest",
   "version": "1.0",
   "description": "Turns any webpage into a doodled adventure with Gemini Nano.",
   "web_accessible_resources": [
