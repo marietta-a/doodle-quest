@@ -11,7 +11,7 @@ const getNumDistractors = (difficulty: Difficulty) => {
 const getNumHospots = (difficulty: Difficulty) => {
   return `
      ${difficulty.code === "easy" ? 5 : (difficulty.code == "medium" 
-      ? 9 : (difficulty.code === "intermediate" ? 12 : 15))};
+      ? 9 : (difficulty.code === "intermediate" ? 15 : 20))};
   `;
 }
 
@@ -76,7 +76,7 @@ export const doodleGenerationPrompt = (pageContent: string, difficulty: Difficul
   1.  Read the following text carefully.
 
   2.  Create a 'theme', a 'summary', and a 'doodle_description'.
-  3.  Generate ${getNumHospots(difficulty)} hotspots based on the theme. **Crucially, ${getNumDistractors(difficulty)} of these hotspots MUST be silly and unrelated to the theme, with their 'isValid' property set to false.**
+  3.  Generate ${getNumHospots(difficulty)} hotspots based on the theme. **Crucially, ${getNumDistractors(difficulty)} INVALID hotspots of these ${getNumHospots(difficulty)} hotspots MUST be silly and unrelated to the theme, with their 'isValid' property set to false.**
   4.  For each hotspot, create a 'pop_up_text', a combination of emojis ('hotspot_emoji'), and a 'description'.
   5.  **For INVALID hotspots (isValid: false), the 'description' MUST explain WHY that step is silly and does not belong in the adventure.**
   6.  Combine everything into a single JSON array, following all the rules and the style of the Golden Example.

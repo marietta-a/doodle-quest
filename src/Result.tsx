@@ -30,13 +30,12 @@ const AdventureStepCard = ({ hotspot, handleDescription, handleValidation}: {
 
   return (
     <motion.div
-      onClick={handleDescription}
       className={`bg-white p-4 rounded-2xl border-4 border-dashed flex flex-col items-center gap-4 shadow-xl w-48 text-center flex-shrink-0 cursor-pointer transition-colors duration-300 ${feedbackClass}`}
     >
       <div className="w-full h-32 doodle-container p-2">
         <GeneratedDoodle svgString={hotspot.hotspot_doodle_svg} className='emoji-small' />
       </div>
-      <div className="doodle-text" title=''>
+      <div className="doodle-text" title='' onClick={handleDescription}>
         <p className={`doodle-label`} title='Check the button if quest is valid'>{hotspot.pop_up_text}</p>
         <ValidationButton hotspot={hotspot} handleValidation={handleValidation }  />
       </div>
@@ -93,14 +92,14 @@ const GameOverScreen = ({ didWin, onReplay, hotspot }: { didWin: boolean, onRepl
   return (
     <motion.div variants={backdropVariants} initial="hidden" animate="visible" exit="exit" className="game-over-overlay">
       <motion.div variants={modalVariants} className={`game-over-content ${didWin ? 'win' : 'loss'}`}>
-        <div className="game-over-emoji">{didWin ? '🎉' : '🤔'}</div>
+        <div className="game-over-emoji">{didWin ? '🎉' : '😢'}</div>
         <h2 className={`game-over-title ${didWin ? 'win' : 'loss'}`}>
           {didWin ? 'You Won!' : 'Game Over!'}
         </h2>
         <p className="game-over-message">
           {didWin
             ? 'Great job! You found all the quests for the adventure.'
-            : `Oops! The quest you selected is invalid. `}
+            : `The quest you selected is invalid. \n ${hotspot?.description}`}
         </p>
         <button onClick={onReplay} className="replay-button">
           Replay
@@ -138,7 +137,7 @@ const DescriptionModal = ({ hotspot, onClose, descriptionStyle }: { hotspot: Hot
           className="modal-content"
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
         >
-          <h3 className={`section-title ${descriptionStyle}`}>{hotspot.pop_up_text}</h3>
+          <h1 className={`section-title ${descriptionStyle}`}>{hotspot.pop_up_text}</h1>
           <p className={`relaxed-text ${descriptionStyle}`}>{hotspot. description}</p>
           <button
             onClick={onClose}
@@ -202,6 +201,7 @@ function ResultPage() {
 
   const handleValidation = (hotspot: Hotspot) => {
     setSelectedHotspot(hotspot);
+    setShowDescriptionModal(hotspot.isValid);
     if (gameState !== 'playing') return;
 
     if (!hotspot.isValid) {
@@ -217,7 +217,9 @@ function ResultPage() {
       }
     }
   };
+
   const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
+  const [showDescriptionModal, setShowDescriptionModal] = useState<boolean>(true);
 
   // --- JSX for the page ---
   return (
@@ -258,7 +260,7 @@ function ResultPage() {
 
                 
               <AnimatePresence>
-                {selectedHotspot && (
+                {selectedHotspot && showDescriptionModal && (
                   <DescriptionModal 
                     hotspot={selectedHotspot} 
                     onClose={() => setSelectedHotspot(null)} 
