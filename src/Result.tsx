@@ -275,7 +275,7 @@ function ResultPage() {
 
                 <motion.div className="quest-panel">
                   <h2 className="quest-heading adventure-theme-panel">
-                    Find all {adventure.hotspots.filter((b) => b.isValid)?.length} valid Quests for "{adventure.theme}"
+                    Check all boxes containing the {adventure.hotspots.filter((b) => b.isValid)?.length} valid Quests for "{adventure.theme}"
                   </h2>
                   <div className="horizontal-scroll">
                     {adventure.hotspots.map((hotspot, index) => (                     
