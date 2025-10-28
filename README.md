@@ -97,7 +97,7 @@ Your Doodle Quest extension should now appear in your list of extensions and be 
 
 ## 📖 How to Use
 
-1.  Navigate to any text-rich webpage you want to explore (a Wikipedia article is a great start!).
+1.  Navigate to any text-rich webpage you want to explore (a Wikipedia article or Google search is a great start!).
 2.  Click the **Doodle Quest icon** in your Chrome toolbar.
 3.  In the pop-up, use the default **Language** and set the **Difficulty**.
 4.  Click the **"Create Adventure!"** button.
