@@ -102,7 +102,7 @@ Your Doodle Quest extension should now appear in your list of extensions and be 
 3.  In the pop-up, use the default **Language** and set the **Difficulty**.
 4.  Click the **"Create Adventure!"** button.
 5.  Wait a few moments as the AI reads the page and builds your quest. A new browser tab will automatically open with your unique adventure!
-6.  Explore the main scene, and then play the the game by clicking on the checking the boxes to find all the valid steps and win the game!
+6.  Explore the main scene, and then play the game by checking the boxes to containing all the valid quests and win the game!
 
 ---
 
